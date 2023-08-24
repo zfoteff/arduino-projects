@@ -1,5 +1,5 @@
 #include <Adafruit_NeoPixel.h>
-#define LED_COUNT           20
+#define LED_COUNT           18
 #define LED_PIN             6
 #define POWER_PIN           2
 #define BRIGHTNESS_UP_PIN   3
@@ -11,15 +11,15 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 int brightness;
 bool POWERED;
-uint32_t color = 0xE1A009;
+uint32_t color = 0xFFFFFF;
 
 void allOn() {
-    strip.fill(color, 0, LED_COUNT - 1);
+    strip.fill(color, 0, LED_COUNT);
     strip.show();
 }
 
 void allOff() {
-    strip.fill(strip.Color(0,0,0), 0, LED_COUNT - 1);
+    strip.fill(strip.Color(0,0,0), 0, LED_COUNT);
     strip.show();
 }
 
@@ -43,8 +43,8 @@ void flickerOut() {
 }
 
 void increaseBrightness() {
-    delay(1);
-    brightness += 1;
+    delay(25);
+    brightness += 5;
 
     if (brightness > MAX_BRIGHTNESS)
         brightness = MAX_BRIGHTNESS;
@@ -54,13 +54,13 @@ void increaseBrightness() {
 }
 
 void decreaseBrightness() {
-    delay(1);
-    brightness -= 1;
+    delay(25);
+    brightness -= 5;
 
     if (brightness < MIN_BRIGHTNESS)
         brightness = MIN_BRIGHTNESS;
 
-    string.setBrightness(brightness);
+    strip.setBrightness(brightness);
     strip.show();
 }
 
@@ -70,16 +70,16 @@ void decreaseBrightness() {
  */
 
 void setup() {
-    brightness = 75;
+    brightness = 100;
     POWERED = false;
 
     pinMode(POWER_PIN, INPUT_PULLUP);
     pinMode(BRIGHTNESS_UP_PIN, INPUT_PULLUP);
     pinMode(BRIGHTNESS_DOWN_PIN, INPUT_PULLUP);
 
-    strip.begin();
+    strip.clear();
     strip.setBrightness(brightness);
-    strip.show();
+    strip.begin();
 }
 
 void loop() {
@@ -90,15 +90,17 @@ void loop() {
     //  Power button pushed
     if (powerState == LOW) {
         if (!POWERED) {
-            // System is off --> Turn system on
+            // System is off --> Tmsurn system on
             POWERED = true;
-            flickerIn();
+            allOn();
+            delay(150)
             return;
         } else {
             // System is on --> Turn system off
             POWERED = false;
-            flickerOut();
+            allOff();
             strip.clear();
+            delay(150)
             return;
         }
     }
